@@ -7,6 +7,24 @@ import java.io.IOException;
 import java.util.List;
 
 public class SomeUnnamedLanguage {
+	
+	/*
+	 * -=DATA TYPE TODOS=-
+	 * TODO: Add array type (more of a dictionary)
+	 * TODO: Add boolean type
+	 * 
+	 * -=MATH FUNCTION TODOS=-
+	 * TODO: Add subtraction
+	 * TODO: Add multiplication
+	 * TODO: Add division
+	 * TODO: Add indices
+	 * TODO: Add increment/decrement
+	 * 
+	 * -=INSTRUCTION TODOS=-
+	 * TODO: Add if statements
+	 * TODO: Add for loops
+	 * TODO: Add while loops
+	 */
 
 	// Prevent instantiation
 	private SomeUnnamedLanguage() {
