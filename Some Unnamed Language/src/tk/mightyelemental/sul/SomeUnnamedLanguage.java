@@ -2,59 +2,67 @@ package tk.mightyelemental.sul;
 
 import static tk.mightyelemental.sul.SULCommands.*;
 
-import java.util.ArrayList;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 public class SomeUnnamedLanguage {
 
-	// private List<List<String>> linesAndArgs = new ArrayList<List<String>>();
-
+	// Prevent instantiation
 	private SomeUnnamedLanguage() {
-		
 	}
 
-	public static void main(String[] args) {// TODO: Add script loading system
-		new SomeUnnamedLanguage();
-	}
-
-	private List<String> splitLineIntoArgs(String line) {
-		List<String> argList = new ArrayList<String>();
-		boolean stringFlag = false;
-		char[] chars = line.toCharArray();
-		StringBuilder arg = new StringBuilder();
-		for ( char c : chars ) {
-			if ( c == '"' ) {
-				stringFlag = !stringFlag;
-			}
-			if ( (c != ' ' && !stringFlag) || stringFlag ) {
-				arg.append(c);
-			}
-			if ( !stringFlag && c == ' ' ) {
-				argList.add(arg.toString());
-				arg.setLength(0);
+	public static void main( String[] args ) {
+		Script script = null;
+		for (String arg : args) {
+			if (!arg.startsWith("--")) {
+				try {
+					script = FileManager.loadScriptFromFile(arg);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		if ( arg.length() > 0 ) {
-			argList.add(arg.toString());
+
+		if (script != null) {
+			runScript(script);
 		}
-		// System.err.println(argList);
-		return argList;
+
 	}
 
-	private void interpretLine(List<String> line) {
+	/**
+	 * Executes a script
+	 * 
+	 * @param script the script to execute
+	 * @see #interpretLine(List)
+	 */
+	static void runScript( Script script ) {
+		for (List<String> line : script.getLines()) {
+			interpretLine(line);
+		}
+	}
+
+	/**
+	 * Interprets and executes a line of code
+	 * 
+	 * @param line the line to execute
+	 */
+	static void interpretLine( List<String> line ) {
 		// System.out.println(line);
 		switch (line.get(0)) {
-		case "set":
-			set(line);
-			break;
-		case "display":
-			display(line);
-			break;
-		case "add":
-			add(line);
-			break;
-		default:
-			SULExceptions.commandNotRecognised(line);
+			case "set":
+				set(line);
+				break;
+			case "display":
+				display(line);
+				break;
+			case "add":
+				add(line);
+				break;
+			default:
+				SULExceptions.commandNotRecognised(line);
 		}
 	}
 
