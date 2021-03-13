@@ -8,6 +8,10 @@ import java.io.IOException;
 
 public class FileManager {
 
+	// Prevent instantiation
+	private FileManager() {
+	}
+
 	/**
 	 * Loads the lines from a specified file.
 	 * 
