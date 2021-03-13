@@ -1,0 +1,8 @@
+set :cool to "a fabulous language"
+set :name to "Jack"
+display "Hello " :name ". What do you think about this language? I think it is " :cool
+set :name to :name " " :name
+display "Hello " :name
+set :num to 5
+add 1000 to :num
+display "The answer is " :num
