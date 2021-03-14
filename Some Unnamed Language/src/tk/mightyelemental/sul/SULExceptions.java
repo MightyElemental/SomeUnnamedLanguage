@@ -67,4 +67,15 @@ public class SULExceptions {
 		criticalException("CommandIncomplete", message, code);
 	}
 
+	/**
+	 * Thrown when the code attempts to use an incompatible type of variable.<br>
+	 * Example: Attempting to add a string to a number will throw this error
+	 * 
+	 * @param message the error message
+	 * @param code the line of code that caused the error
+	 */
+	public static void incompatibleTypeException( String message, String... code ) {
+		criticalException("IncompatibleType", message, code);
+	}
+
 }

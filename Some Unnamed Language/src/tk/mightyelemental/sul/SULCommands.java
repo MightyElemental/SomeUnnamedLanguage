@@ -11,6 +11,17 @@ public class SULCommands {
 
 	public static HashMap<String, Object> variables = new HashMap<String, Object>();
 
+	/**
+	 * Define a variable with a value.<br>
+	 * Examples:
+	 * 
+	 * <pre>
+	 * set :name to "Jack"
+	 * set :num to 123
+	 * </pre>
+	 * 
+	 * @param line the line of code to process
+	 */
 	public static void set( String[] line ) {
 		// Ensure variable starts with variable symbol
 		if (!line[1].startsWith(":")) {
@@ -22,7 +33,7 @@ public class SULCommands {
 			commandIncompleteException("Line is incomplete!", line);
 		}
 		StringBuilder buffer = new StringBuilder();
-		// boolean isString = false;
+		boolean isString = false;
 		for (int i = 3; i < line.length; i++) {
 			String token = line[i];
 			if (token.startsWith(":")) {
@@ -33,7 +44,7 @@ public class SULCommands {
 				}
 			} else if (token.startsWith("\"")) {
 				buffer.append(token.replaceAll("\"", ""));
-				// isString = true;
+				isString = true;
 			} else if (isNumber(token)) {
 				buffer.append(token);
 			} else {
@@ -43,7 +54,11 @@ public class SULCommands {
 			}
 		}
 
-		variables.put(line[1], buffer.toString());
+		if (isString) {
+			variables.put(line[1], buffer.toString());
+		} else {
+			variables.put(line[1], Double.parseDouble(buffer.toString()));
+		}
 
 		// System.out.println(variables);
 	}
@@ -56,24 +71,39 @@ public class SULCommands {
 	 */
 	private static boolean isNumber( String val ) {
 		try {
-			Float.parseFloat(val);
+			Double.parseDouble(val);
 		} catch (Exception e) {
 			return false;
 		}
 		return true;
 	}
 
-	public static String display( String[] line ) {
+	/**
+	 * Prints out a string to the console.<br>
+	 * Examples:
+	 * 
+	 * <pre>
+	 * display "Hello World!"
+	 * display "The number " :num " is a pretty good number"
+	 * </pre>
+	 * 
+	 * @param line the line of code to process
+	 */
+	public static void display( String[] line ) {
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 1; i < line.length; i++) {
 			String token = line[i];
 			if (token.startsWith(":")) {
 
 				if (doesVarExist(token)) {
-					buffer.append(getVarVal(token).toString());
+					Object varVal = getVarVal(token);
+					if (varVal instanceof Double) {
+						buffer.append(Utils.numberToString((Double) varVal));
+					} else {
+						buffer.append(varVal.toString());
+					}
 				} else {
 					varNotSetException(token);
-					return null;
 				}
 
 			} else if (token.startsWith("\"")) {
@@ -84,55 +114,70 @@ public class SULCommands {
 			}
 		}
 		System.out.println(buffer.toString());
-		return buffer.toString();
 	}
 
-	public static boolean add( String[] line ) {
-		// line.remove(0);
-		float amount = 0;
-		float oldAmount = 0;
-		boolean flag = false;
-		try {
+	/**
+	 * Adds a number to a number variable.<br>
+	 * Examples:
+	 * 
+	 * <pre>
+	 * add 123 to :num
+	 * add :num to :num
+	 * </pre>
+	 * 
+	 * @param line the line of code to process
+	 */
+	public static void add( String[] line ) {
+		double amount = 0;
+		double oldAmount = 0;
+		boolean valueSetFlag = false;
+
+		if (line[1].startsWith(":")) { // Check if value is a variable
 			if (doesVarExist(line[1])) {
-				if (isNumber(getVarVal(line[1]) + "")) {
-					amount = Float.parseFloat(getVarVal(line[1]) + "");
-					flag = true;
+				String varVal = getVarVal(line[1]).toString();
+				if (isNumber(varVal)) {
+					amount = Double.parseDouble(varVal);
+					valueSetFlag = true;
 				}
-			}
-			if (!flag) {
-				if (isNumber(line[1])) {
-					amount = Float.parseFloat(line[1]);
-					flag = true;
-				}
-			}
-
-			if (!flag) {
-				SULExceptions.invalidSyntaxException("A number or a number variable needs to be used in the first argument",
-						line);
-				return false;
-			}
-
-			Object o = getVarVal(line[3]);
-			if (o == null) {
-				SULExceptions.varNotSetException(line[3]);
-				return false;
 			} else {
-				oldAmount = Float.parseFloat(o + "");
+				varNotSetException(line[1]);
 			}
-		} catch (Exception e) {
-			SULExceptions.invalidSyntaxException("", line);
-			return false;
+		} else if (isNumber(line[1])) {
+			amount = Double.parseDouble(line[1]);
+			valueSetFlag = true;
+		}
+
+		// If a value couldn't be found, throw an error
+		if (!valueSetFlag) {
+			incompatibleTypeException("A number, or a number variable, needs to be used in the first argument", line);
+		}
+
+		if (doesVarExist(line[3])) {
+			Object o = getVarVal(line[3]);
+			oldAmount = Double.parseDouble(o.toString());
+		} else {
+			varNotSetException(line[3]);
 		}
 
 		variables.put(line[3], oldAmount + amount);
-
-		return true;
 	}
 
+	/**
+	 * Get the value of variable
+	 * 
+	 * @param var the name of the variable
+	 * @return The value of the object, or {@code null} if the variable does not exist
+	 */
 	public static Object getVarVal( String var ) {
 		return variables.get(var);
 	}
 
+	/**
+	 * Check if a variable exists
+	 * 
+	 * @param var the name of the variable
+	 * @return {@code true} if the variable exists
+	 */
 	public static boolean doesVarExist( String var ) {
 		return variables.containsKey(var);
 	}
