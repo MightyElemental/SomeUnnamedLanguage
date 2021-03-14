@@ -57,7 +57,7 @@ public class SomeUnnamedLanguage {
 	 * @see #interpretLine(List)
 	 */
 	static void runScript( Script script ) {
-		for (List<String> line : script.getLines()) {
+		for (String[] line : script.getLines()) {
 			interpretLine(line);
 		}
 	}
@@ -67,9 +67,9 @@ public class SomeUnnamedLanguage {
 	 * 
 	 * @param line the line to execute
 	 */
-	static void interpretLine( List<String> line ) {
+	static void interpretLine( String[] line ) {
 		// System.out.println(line);
-		switch (line.get(0)) {
+		switch (line[0]) {
 			case "set":
 				set(line);
 				break;

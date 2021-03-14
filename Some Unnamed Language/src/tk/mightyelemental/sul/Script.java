@@ -14,7 +14,7 @@ public class Script {
 	 * 
 	 * @see #tokenizeScriptLine(String)
 	 */
-	private List<List<String>> tokenizedLines = new ArrayList<List<String>>();
+	private List<String[]> tokenizedLines = new ArrayList<String[]>();
 
 	public Script( String scriptLocation ) throws IOException, FileNotFoundException {
 		this(FileManager.loadLinesFromFile(scriptLocation));
@@ -39,9 +39,9 @@ public class Script {
 	 * contained within two quotation marks).
 	 * 
 	 * @param line the line to split into tokens
-	 * @return A list of tokens from the line (the first token is the instruction)
+	 * @return An array of tokens from the line (the first token is the instruction)
 	 */
-	public static List<String> tokenizeScriptLine( String line ) {
+	public static String[] tokenizeScriptLine( String line ) {
 		List<String> tokenList = new ArrayList<String>();
 		boolean stringFlag = false;
 		char[] chars = line.toCharArray();
@@ -62,7 +62,7 @@ public class Script {
 			tokenList.add(token.toString());
 		}
 		// System.err.println(tokenList);
-		return tokenList;
+		return tokenList.toArray(String[]::new);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class Script {
 	 * 
 	 * @return The tokenized lines of the script
 	 */
-	public List<List<String>> getLines() {
+	public List<String[]> getLines() {
 		return tokenizedLines;
 	}
 
