@@ -20,10 +20,11 @@ public class SomeUnnamedLanguage {
 	 * TODO: Add indices
 	 * TODO: Add increment/decrement
 	 * 
-	 * -=INSTRUCTION TODOS=-
+	 * -=FUNCTIONALITY TODOS=-
 	 * TODO: Add if statements
 	 * TODO: Add for loops
 	 * TODO: Add while loops
+	 * TODO: Add labels and goto statements
 	 */
 
 	// Prevent instantiation
