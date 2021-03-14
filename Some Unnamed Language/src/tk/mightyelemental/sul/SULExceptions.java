@@ -13,7 +13,7 @@ public class SULExceptions {
 	 * @param code the line of code that caused the error
 	 */
 	private static void exception( String type, String message, String... code ) {
-		System.err.printf("\n%sException\n\t%s\n\t[%s]\n", type, message, String.join(" ", code));
+		System.err.printf("%sException\n\t%s\n\t[%s]\n", type, message, String.join(" ", code));
 	}
 
 	/**
