@@ -1,9 +1,6 @@
 package tk.mightyelemental.sul;
 
-import static tk.mightyelemental.sul.SULExceptions.commandIncompleteException;
-import static tk.mightyelemental.sul.SULExceptions.incompatibleTypeException;
-import static tk.mightyelemental.sul.SULExceptions.invalidSyntaxException;
-import static tk.mightyelemental.sul.SULExceptions.varNotSetException;
+import static tk.mightyelemental.sul.SULExceptions.*;
 
 import java.util.HashMap;
 
@@ -24,6 +21,7 @@ public class SULCommands {
 	 * </pre>
 	 * 
 	 * @param line the line of code to process
+	 * @param lineNum the line number the code belongs to
 	 */
 	public static void set( String[] line, int lineNum ) {
 		// Ensure variable starts with variable symbol
@@ -91,6 +89,7 @@ public class SULCommands {
 	 * </pre>
 	 * 
 	 * @param line the line of code to process
+	 * @param lineNum the line number the code belongs to
 	 */
 	public static void display( String[] line, int lineNum ) {
 		StringBuilder buffer = new StringBuilder();
@@ -129,6 +128,7 @@ public class SULCommands {
 	 * </pre>
 	 * 
 	 * @param line the line of code to process
+	 * @param lineNum the line number the code belongs to
 	 */
 	public static void add( String[] line, int lineNum ) {
 		double amount = 0;
