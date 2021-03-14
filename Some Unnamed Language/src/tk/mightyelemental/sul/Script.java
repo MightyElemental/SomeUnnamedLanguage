@@ -16,6 +16,9 @@ public class Script {
 	 */
 	private List<String[]> tokenizedLines;
 
+	/** A list of unprocessed lines of code */
+	private List<String> rawLines;
+
 	public Script( String scriptLocation ) throws IOException, FileNotFoundException {
 		this(FileManager.loadLinesFromFile(scriptLocation));
 	}
@@ -29,6 +32,7 @@ public class Script {
 	public Script( String... script ) {
 		String[] scriptLines = Arrays.copyOf(script, script.length);
 		tokenizedLines = new ArrayList<String[]>(scriptLines.length);
+		rawLines = new ArrayList<String>(List.of(scriptLines));
 		for (String line : scriptLines) {
 			tokenizedLines.add(tokenizeScriptLine(line));
 		}
@@ -73,6 +77,13 @@ public class Script {
 	 */
 	public List<String[]> getLines() {
 		return tokenizedLines;
+	}
+
+	/**
+	 * @return The raw lines of code
+	 */
+	public List<String> getRawLines() {
+		return rawLines;
 	}
 
 }
