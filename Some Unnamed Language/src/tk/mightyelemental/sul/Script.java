@@ -14,7 +14,7 @@ public class Script {
 	 * 
 	 * @see #tokenizeScriptLine(String)
 	 */
-	private List<String[]> tokenizedLines = new ArrayList<String[]>();
+	private List<String[]> tokenizedLines;
 
 	public Script( String scriptLocation ) throws IOException, FileNotFoundException {
 		this(FileManager.loadLinesFromFile(scriptLocation));
@@ -28,6 +28,7 @@ public class Script {
 	 */
 	public Script( String... script ) {
 		String[] scriptLines = Arrays.copyOf(script, script.length);
+		tokenizedLines = new ArrayList<String[]>(scriptLines.length);
 		for (String line : scriptLines) {
 			tokenizedLines.add(tokenizeScriptLine(line));
 		}
@@ -35,8 +36,8 @@ public class Script {
 
 	/**
 	 * Split a line into individual tokens.<br>
-	 * Currently, it mainly splits tokens by the spaces, however, a String is regarded as a single token (defined as being
-	 * contained within two quotation marks).
+	 * Currently, it mainly splits tokens by the spaces, however, a String is regarded as a single token (defined as
+	 * being contained within two quotation marks).
 	 * 
 	 * @param line the line to split into tokens
 	 * @return An array of tokens from the line (the first token is the instruction)
