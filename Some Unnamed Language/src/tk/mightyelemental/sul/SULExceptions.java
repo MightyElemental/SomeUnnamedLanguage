@@ -12,8 +12,8 @@ public class SULExceptions {
 	 * @param message the error message
 	 * @param code the line of code that caused the error
 	 */
-	private static void exception( String type, String message, String... code ) {
-		System.err.printf("%sException\n\t%s\n\t[%s]\n", type, message, String.join(" ", code));
+	private static void exception( String type, String message, int lineNum, String... code ) {
+		System.err.printf("%sException\n\t%s\n\tline %d: [%s]\n", type, message, lineNum+1, String.join(" ", code));
 	}
 
 	/**
@@ -24,8 +24,8 @@ public class SULExceptions {
 	 * @param code the line of code that caused the error
 	 * @see #exception(String, String, String)
 	 */
-	private static void criticalException( String type, String message, String... code ) {
-		exception(type, message, code);
+	private static void criticalException( String type, String message, int lineNum, String... code ) {
+		exception(type, message, lineNum, code);
 		System.exit(1);
 	}
 
@@ -35,8 +35,8 @@ public class SULExceptions {
 	 * @param message the error message
 	 * @param code the line of code that caused the error
 	 */
-	public static void invalidSyntaxException( String message, String... code ) {
-		criticalException("InvalidSyntax", message, code);
+	public static void invalidSyntaxException( String message, int lineNum, String... code ) {
+		criticalException("InvalidSyntax", message, lineNum, code);
 	}
 
 	/**
@@ -44,8 +44,8 @@ public class SULExceptions {
 	 * 
 	 * @param code the line of code that caused the error
 	 */
-	public static void varNotSetException( String... code ) {
-		criticalException("VariableNotFound", "The following variable has not been assigned", code);
+	public static void varNotSetException( int lineNum, String... code ) {
+		criticalException("VariableNotFound", "The following variable has not been assigned", lineNum, code);
 	}
 
 	/**
@@ -53,8 +53,8 @@ public class SULExceptions {
 	 * 
 	 * @param code the line of code that caused the error
 	 */
-	public static void commandNotRecognised( String... code ) {
-		criticalException("CommandNotRecognised", "The command used does not exist!", code);
+	public static void commandNotRecognised( int lineNum, String... code ) {
+		criticalException("CommandNotRecognised", "The command used does not exist!", lineNum, code);
 	}
 
 	/**
@@ -63,8 +63,8 @@ public class SULExceptions {
 	 * @param message the error message
 	 * @param code the line of code that caused the error
 	 */
-	public static void commandIncompleteException( String message, String... code ) {
-		criticalException("CommandIncomplete", message, code);
+	public static void commandIncompleteException( String message, int lineNum, String... code ) {
+		criticalException("CommandIncomplete", message, lineNum, code);
 	}
 
 	/**
@@ -74,8 +74,8 @@ public class SULExceptions {
 	 * @param message the error message
 	 * @param code the line of code that caused the error
 	 */
-	public static void incompatibleTypeException( String message, String... code ) {
-		criticalException("IncompatibleType", message, code);
+	public static void incompatibleTypeException( String message, int lineNum, String... code ) {
+		criticalException("IncompatibleType", message, lineNum, code);
 	}
 
 }

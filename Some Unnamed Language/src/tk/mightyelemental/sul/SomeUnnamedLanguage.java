@@ -57,8 +57,10 @@ public class SomeUnnamedLanguage {
 	 * @see #interpretLine(List)
 	 */
 	static void runScript( Script script ) {
-		for (String[] line : script.getLines()) {
-			interpretLine(line);
+		
+		for (int i = 0; i < script.getLines().size(); i++) {
+			String[] line = script.getLines().get(i);
+			interpretLine(line, i);
 		}
 	}
 
@@ -67,20 +69,20 @@ public class SomeUnnamedLanguage {
 	 * 
 	 * @param line the line to execute
 	 */
-	static void interpretLine( String[] line ) {
+	static void interpretLine( String[] line, int lineNum ) {
 		// System.out.println(line);
 		switch (line[0]) {
 			case "set":
-				set(line);
+				set(line, lineNum);
 				break;
 			case "display":
-				display(line);
+				display(line, lineNum);
 				break;
 			case "add":
-				add(line);
+				add(line, lineNum);
 				break;
 			default:
-				SULExceptions.commandNotRecognised(line);
+				SULExceptions.commandNotRecognised(lineNum, line);
 		}
 	}
 

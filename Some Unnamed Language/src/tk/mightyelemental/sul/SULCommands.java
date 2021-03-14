@@ -1,6 +1,9 @@
 package tk.mightyelemental.sul;
 
-import static tk.mightyelemental.sul.SULExceptions.*;
+import static tk.mightyelemental.sul.SULExceptions.commandIncompleteException;
+import static tk.mightyelemental.sul.SULExceptions.incompatibleTypeException;
+import static tk.mightyelemental.sul.SULExceptions.invalidSyntaxException;
+import static tk.mightyelemental.sul.SULExceptions.varNotSetException;
 
 import java.util.HashMap;
 
@@ -22,7 +25,7 @@ public class SULCommands {
 	 * 
 	 * @param line the line of code to process
 	 */
-	public static void set( String[] line ) {
+	public static void set( String[] line, int lineNum ) {
 		// Ensure variable starts with variable symbol
 		if (!line[1].startsWith(":")) {
 			System.err.println("Variable names must start with a ':'");
@@ -30,7 +33,7 @@ public class SULCommands {
 		}
 		// Ensure command has enough tokens
 		if (line.length < 4) {
-			commandIncompleteException("Line is incomplete!", line);
+			commandIncompleteException("Line is incomplete!", lineNum, line);
 		}
 		StringBuilder buffer = new StringBuilder();
 		boolean isString = false;
@@ -40,7 +43,7 @@ public class SULCommands {
 				if (doesVarExist(token)) {
 					buffer.append(getVarVal(token).toString());
 				} else {
-					varNotSetException(token);
+					varNotSetException(lineNum, token);
 				}
 			} else if (token.startsWith("\"")) {
 				buffer.append(token.replaceAll("\"", ""));
@@ -50,7 +53,7 @@ public class SULCommands {
 			} else {
 				invalidSyntaxException("-Strings must be contained within quotes.\n"
 						+ "-Variables must start with a colon.\n" + "-Numbers can only contain the numbers 0-9, '-', and '.'",
-						token);
+						lineNum, token);
 			}
 		}
 
@@ -89,7 +92,7 @@ public class SULCommands {
 	 * 
 	 * @param line the line of code to process
 	 */
-	public static void display( String[] line ) {
+	public static void display( String[] line, int lineNum ) {
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 1; i < line.length; i++) {
 			String token = line[i];
@@ -103,14 +106,14 @@ public class SULCommands {
 						buffer.append(varVal.toString());
 					}
 				} else {
-					varNotSetException(token);
+					varNotSetException(lineNum, token);
 				}
 
 			} else if (token.startsWith("\"")) {
 				buffer.append(token.replaceAll("\"", ""));
 			} else {
 				invalidSyntaxException("Strings must be contained within quotes and variables must start with a colon.",
-						token);
+						lineNum, line);
 			}
 		}
 		System.out.println(buffer.toString());
@@ -127,7 +130,7 @@ public class SULCommands {
 	 * 
 	 * @param line the line of code to process
 	 */
-	public static void add( String[] line ) {
+	public static void add( String[] line, int lineNum ) {
 		double amount = 0;
 		double oldAmount = 0;
 		boolean valueSetFlag = false;
@@ -140,7 +143,7 @@ public class SULCommands {
 					valueSetFlag = true;
 				}
 			} else {
-				varNotSetException(line[1]);
+				varNotSetException(lineNum, line[1]);
 			}
 		} else if (isNumber(line[1])) {
 			amount = Double.parseDouble(line[1]);
@@ -149,14 +152,15 @@ public class SULCommands {
 
 		// If a value couldn't be found, throw an error
 		if (!valueSetFlag) {
-			incompatibleTypeException("A number, or a number variable, needs to be used in the first argument", line);
+			incompatibleTypeException("A number, or a number variable, needs to be used in the first argument", lineNum,
+					line);
 		}
 
 		if (doesVarExist(line[3])) {
 			Object o = getVarVal(line[3]);
 			oldAmount = Double.parseDouble(o.toString());
 		} else {
-			varNotSetException(line[3]);
+			varNotSetException(lineNum, line[3]);
 		}
 
 		variables.put(line[3], oldAmount + amount);
