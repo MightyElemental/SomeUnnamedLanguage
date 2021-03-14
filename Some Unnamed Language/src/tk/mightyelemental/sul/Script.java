@@ -52,17 +52,18 @@ public class Script {
 		char[] chars = line.toCharArray();
 		StringBuilder token = new StringBuilder();
 		for (char c : chars) {
+			// If char is quote, toggle the string mode
 			if (c == '"') {
 				stringFlag = !stringFlag;
 			}
-			if ((c != ' ' && !stringFlag) || stringFlag) {
+			if (c != ' ' || stringFlag) {
 				token.append(c);
-			}
-			if (!stringFlag && c == ' ') {
+			} else if (token.length() > 0) {
 				tokenList.add(token.toString());
 				token.setLength(0);
 			}
 		}
+		// If there is content remaining in the buffer, add buffer to token list
 		if (token.length() > 0) {
 			tokenList.add(token.toString());
 		}
