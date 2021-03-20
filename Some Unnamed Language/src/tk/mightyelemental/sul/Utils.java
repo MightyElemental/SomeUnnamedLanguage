@@ -15,4 +15,19 @@ public class Utils {
 		return String.valueOf(num);
 	}
 
+	/**
+	 * Test if a String is a valid number
+	 * 
+	 * @param val the String to test
+	 * @return {@code true} if the String is a valid number, {@code false} otherwise
+	 */
+	public static boolean isNumber( String val ) {
+		try {
+			Double.parseDouble(val);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
 }
