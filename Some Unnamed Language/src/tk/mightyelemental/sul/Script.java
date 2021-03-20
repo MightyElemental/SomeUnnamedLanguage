@@ -161,7 +161,10 @@ public class Script {
 			SULExceptions.invalidVariableSyntaxException(-1, tokens);
 		}
 
-		return new Token(element, index, of, var);
+		Token result = new Token(element, index, of, var);
+		result.setType(Token.Type.ListRef);
+
+		return result;
 	}
 
 	/**

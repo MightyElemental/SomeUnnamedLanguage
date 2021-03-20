@@ -53,6 +53,15 @@ public class Token {
 		return type;
 	}
 
+	/**
+	 * Change the type of token
+	 * 
+	 * @param t the new type
+	 */
+	public void setType( Type t ) {
+		this.type = t;
+	}
+
 	public String toString() {
 		return data;
 	}
@@ -81,6 +90,6 @@ public class Token {
 
 	/** The token type helps with processing of commands */
 	public static enum Type {
-		Complex, Number, String, Variable, Command, Extra
+		Complex, ListRef, Number, String, Variable, Command, Extra
 	}
 }
