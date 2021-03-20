@@ -24,10 +24,10 @@ public class SULCommands {
 	 * @param line the line of code to process
 	 * @param lineNum the line number the code belongs to
 	 */
-	public static void set( String[] line, int lineNum ) {
+	public static void set( Token[] line, int lineNum ) {
 		// Ensure variable starts with variable symbol
-		if (!line[1].startsWith(":")) {
-			SULExceptions.invalidVariableSyntaxException(lineNum, line);
+		if (line[1].getType() != Token.Type.Variable) {
+			SULExceptions.invalidSyntaxException("First argument must be a variable", lineNum, line);
 		}
 		// Ensure command has enough tokens
 		if (line.length < 4) {
@@ -36,29 +36,35 @@ public class SULCommands {
 		StringBuilder buffer = new StringBuilder();
 		boolean isString = false;
 		for (int i = 3; i < line.length; i++) {
-			String token = line[i];
-			if (token.startsWith(":")) {
-				if (doesVarExist(token)) {
-					buffer.append(getVarVal(token).toString());
-				} else {
-					varNotSetException(lineNum, token);
-				}
-			} else if (token.startsWith("\"")) {
-				buffer.append(token.replaceAll("\"", ""));
-				isString = true;
-			} else if (isNumber(token)) {
-				buffer.append(token);
-			} else {
-				invalidSyntaxException("-Strings must be contained within quotes.\n"
-						+ "-Variables must start with a colon.\n" + "-Numbers can only contain the numbers 0-9, '-', and '.'",
-						lineNum, token);
+			Token token = line[i];
+			switch (token.getType()) { // TODO: Add list types
+				case Number:
+					buffer.append(token);
+					break;
+				case String:
+					buffer.append(token.getData().replaceAll("\"", ""));
+					isString = true;
+					break;
+				case Variable:
+					if (doesVarExist(token)) {
+						buffer.append(getVarVal(token).toString());
+					} else {
+						varNotSetException(lineNum, token);
+					}
+					break;
+				default:
+					invalidSyntaxException(
+							"-Strings must be contained within quotes.\n" + "-Variables must start with a colon.\n"
+									+ "-Numbers can only contain the numbers 0-9, '-', and '.'",
+							lineNum, token);
+					break;
 			}
 		}
 
-		if (isString) {
-			variables.put(line[1], buffer.toString());
+		if (isString) { // TODO: Add boolean and list values
+			variables.put(line[1].getData(), buffer.toString());
 		} else {
-			variables.put(line[1], Double.parseDouble(buffer.toString()));
+			variables.put(line[1].getData(), Double.parseDouble(buffer.toString()));
 		}
 
 		// System.out.println(variables);
@@ -76,28 +82,34 @@ public class SULCommands {
 	 * @param line the line of code to process
 	 * @param lineNum the line number the code belongs to
 	 */
-	public static void display( String[] line, int lineNum ) {
+	public static void display( Token[] line, int lineNum ) {
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 1; i < line.length; i++) {
-			String token = line[i];
-			if (token.startsWith(":")) {
-
-				if (doesVarExist(token)) {
-					Object varVal = getVarVal(token);
-					if (varVal instanceof Double) {
-						buffer.append(Utils.numberToString((Double) varVal));
+			Token token = line[i];
+			switch (token.getType()) { // TODO: Add list types
+				case Number:
+					buffer.append(token.getData());
+					break;
+				case String:
+					buffer.append(token.getData().replaceAll("\"", ""));
+					break;
+				case Variable:
+					if (doesVarExist(token)) {
+						Object varVal = getVarVal(token);
+						if (varVal instanceof Double) {
+							buffer.append(Utils.numberToString((Double) varVal));
+						} else {
+							buffer.append(varVal.toString());
+						}
 					} else {
-						buffer.append(varVal.toString());
+						varNotSetException(lineNum, token);
 					}
-				} else {
-					varNotSetException(lineNum, token);
-				}
+					break;
+				default:
+					invalidSyntaxException("Strings must be contained within quotes and variables must start with a colon.",
+							lineNum, line);
+					break;
 
-			} else if (token.startsWith("\"")) {
-				buffer.append(token.replaceAll("\"", ""));
-			} else {
-				invalidSyntaxException("Strings must be contained within quotes and variables must start with a colon.",
-						lineNum, line);
 			}
 		}
 		System.out.println(buffer.toString());
@@ -115,24 +127,29 @@ public class SULCommands {
 	 * @param line the line of code to process
 	 * @param lineNum the line number the code belongs to
 	 */
-	public static void add( String[] line, int lineNum ) {
+	public static void add( Token[] line, int lineNum ) {
 		double amount = 0;
 		double oldAmount = 0;
 		boolean valueSetFlag = false;
 
-		if (line[1].startsWith(":")) { // Check if value is a variable
-			if (doesVarExist(line[1])) {
-				String varVal = getVarVal(line[1]).toString();
-				if (isNumber(varVal)) {
-					amount = Double.parseDouble(varVal);
-					valueSetFlag = true;
+		switch (line[1].getType()) { // TODO: Add list types
+			case Number:
+				amount = Double.parseDouble(line[1].getData());
+				valueSetFlag = true;
+				break;
+			case Variable:
+				if (doesVarExist(line[1])) {
+					String varVal = getVarVal(line[1]).toString();
+					if (isNumber(varVal)) {
+						amount = Double.parseDouble(varVal);
+						valueSetFlag = true;
+					}
+				} else {
+					varNotSetException(lineNum, line[1]);
 				}
-			} else {
-				varNotSetException(lineNum, line[1]);
-			}
-		} else if (isNumber(line[1])) {
-			amount = Double.parseDouble(line[1]);
-			valueSetFlag = true;
+				break;
+			default:
+				break;
 		}
 
 		// If a value couldn't be found, throw an error
@@ -148,7 +165,7 @@ public class SULCommands {
 			varNotSetException(lineNum, line[3]);
 		}
 
-		variables.put(line[3], oldAmount + amount);
+		variables.put(line[3].getData(), oldAmount + amount);
 	}
 
 	/**
@@ -162,6 +179,17 @@ public class SULCommands {
 	}
 
 	/**
+	 * Get the value of variable
+	 * 
+	 * @param var the name of the variable
+	 * @return The value of the object, or {@code null} if the variable does not exist
+	 * @see #getVarVal(String)
+	 */
+	public static Object getVarVal( Token var ) {
+		return getVarVal(var.getData());
+	}
+
+	/**
 	 * Check if a variable exists
 	 * 
 	 * @param var the name of the variable
@@ -169,6 +197,17 @@ public class SULCommands {
 	 */
 	public static boolean doesVarExist( String var ) {
 		return variables.containsKey(var);
+	}
+
+	/**
+	 * Check if a variable exists
+	 * 
+	 * @param var the name of the variable
+	 * @return {@code true} if the variable exists
+	 * @see #doesVarExist(String)
+	 */
+	public static boolean doesVarExist( Token var ) {
+		return doesVarExist(var.getData());
 	}
 
 }

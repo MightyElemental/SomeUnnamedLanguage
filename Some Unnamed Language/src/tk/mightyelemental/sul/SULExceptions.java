@@ -13,8 +13,8 @@ public class SULExceptions {
 	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
-	private static void exception( String type, String message, int lineNum, String... code ) {
-		System.err.printf("%sException\n\t%s\n\tline %d: [%s]\n", type, message, lineNum + 1, String.join(" ", code));
+	private static void exception( String type, String message, int lineNum, Token... code ) {
+		System.err.printf("%sException\n\t%s\n\tline %d: [%s]\n", type, message, lineNum + 1, Token.joinTokens(code));
 	}
 
 	/**
@@ -26,7 +26,7 @@ public class SULExceptions {
 	 * @param code the line of code that caused the error
 	 * @see #exception(String, String, String)
 	 */
-	private static void criticalException( String type, String message, int lineNum, String... code ) {
+	private static void criticalException( String type, String message, int lineNum, Token... code ) {
 		exception(type, message, lineNum, code);
 		System.exit(1);
 	}
@@ -38,7 +38,7 @@ public class SULExceptions {
 	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
-	public static void invalidSyntaxException( String message, int lineNum, String... code ) {
+	public static void invalidSyntaxException( String message, int lineNum, Token... code ) {
 		criticalException("InvalidSyntax", message, lineNum, code);
 	}
 
@@ -48,7 +48,7 @@ public class SULExceptions {
 	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
-	public static void invalidVariableSyntaxException( int lineNum, String... code ) {
+	public static void invalidVariableSyntaxException( int lineNum, Token... code ) {
 		invalidSyntaxException("Variable names must start with a ':'", lineNum, code);
 	}
 
@@ -58,7 +58,7 @@ public class SULExceptions {
 	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
-	public static void varNotSetException( int lineNum, String... code ) {
+	public static void varNotSetException( int lineNum, Token... code ) {
 		criticalException("VariableNotFound", "The following variable has not been assigned", lineNum, code);
 	}
 
@@ -68,7 +68,7 @@ public class SULExceptions {
 	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
-	public static void commandNotRecognised( int lineNum, String... code ) {
+	public static void commandNotRecognised( int lineNum, Token... code ) {
 		criticalException("CommandNotRecognised", "The command used does not exist!", lineNum, code);
 	}
 
@@ -79,7 +79,7 @@ public class SULExceptions {
 	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
-	public static void commandIncompleteException( String message, int lineNum, String... code ) {
+	public static void commandIncompleteException( String message, int lineNum, Token... code ) {
 		criticalException("CommandIncomplete", message, lineNum, code);
 	}
 
@@ -91,7 +91,7 @@ public class SULExceptions {
 	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
-	public static void incompatibleTypeException( String message, int lineNum, String... code ) {
+	public static void incompatibleTypeException( String message, int lineNum, Token... code ) {
 		criticalException("IncompatibleType", message, lineNum, code);
 	}
 

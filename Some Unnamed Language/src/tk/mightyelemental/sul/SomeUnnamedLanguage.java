@@ -48,7 +48,6 @@ public class SomeUnnamedLanguage {
 		if (script != null) {
 			runScript(script);
 		}
-
 	}
 
 	/**
@@ -60,7 +59,7 @@ public class SomeUnnamedLanguage {
 	static void runScript( Script script ) {
 		
 		for (int i = 0; i < script.getLines().size(); i++) {
-			String[] line = script.getLines().get(i);
+			Token[] line = script.getLines().get(i);
 			interpretLine(line, i);
 		}
 	}
@@ -71,9 +70,9 @@ public class SomeUnnamedLanguage {
 	 * @param line the line to execute
 	 * @param lineNum the line number the code belongs to
 	 */
-	static void interpretLine( String[] line, int lineNum ) {
+	static void interpretLine( Token[] line, int lineNum ) {
 		// System.out.println(line);
-		switch (line[0]) {
+		switch (line[0].getData()) {
 			case "set":
 				set(line, lineNum);
 				break;

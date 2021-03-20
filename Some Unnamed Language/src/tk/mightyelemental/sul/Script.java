@@ -12,10 +12,11 @@ public class Script {
 	/**
 	 * A list of tokenized lines
 	 * 
-	 * @see #tokenizeScriptLine(String)
-	 * @see #tokenizeScriptLineSecondary(String[])
+	 * @see #tokenizeFirstPass(String)
+	 * @see #tokenizeSecondPass(String[])
+	 * @see #tokenizeThirdPass(Token[])
 	 */
-	private List<String[]> tokenizedLines;
+	private List<Token[]> tokenizedLines;
 
 	/** A list of unprocessed lines of code */
 	private List<String> rawLines;
@@ -41,12 +42,13 @@ public class Script {
 	 */
 	public Script( String[] script ) {
 		String[] scriptLines = Arrays.copyOf(script, script.length);
-		tokenizedLines = new ArrayList<String[]>(scriptLines.length);
+		tokenizedLines = new ArrayList<Token[]>(scriptLines.length);
 		rawLines = new ArrayList<String>(List.of(scriptLines));
 		for (String line : scriptLines) {
-			String[] tokens = tokenizeScriptLine(line);
-			tokens = tokenizeScriptLineSecondary(tokens);
-			tokenizedLines.add(tokens);
+			String[] tokens = tokenizeFirstPass(line);
+			Token[] tTokens = tokenizeSecondPass(tokens);
+			tTokens = tokenizeThirdPass(tTokens);
+			tokenizedLines.add(tTokens);
 		}
 	}
 
@@ -58,7 +60,7 @@ public class Script {
 	 * @param line the line to split into tokens
 	 * @return An array of tokens from the line (the first token is the instruction)
 	 */
-	public static String[] tokenizeScriptLine( String line ) {
+	public static String[] tokenizeFirstPass( String line ) {
 		List<String> tokenList = new ArrayList<String>();
 		boolean stringFlag = false;
 		char[] chars = line.toCharArray();
@@ -84,14 +86,40 @@ public class Script {
 	}
 
 	/**
+	 * Assign token types to already split tokens<br>
+	 * 
+	 * @param tokens the line to split into tokens
+	 * @return An array of tokens from the line (the first token is the instruction)
+	 * @see #tokenizeFirstPass(String)
+	 */
+	private Token[] tokenizeSecondPass( String[] tokens ) { // TODO: Check if these assignments are accurate in context
+		List<Token> tokenList = new ArrayList<Token>();
+
+		tokenList.add(new Token(tokens[0], Token.Type.Command));
+		for (int i = 1; i < tokens.length; i++) {
+			if (tokens[i].startsWith("\"")) {
+				tokenList.add(new Token(tokens[i], Token.Type.String));
+			} else if (Utils.isNumber(tokens[i])) {
+				tokenList.add(new Token(tokens[i], Token.Type.Number));
+			} else if (tokens[i].startsWith(":")) {
+				tokenList.add(new Token(tokens[i], Token.Type.Variable));
+			} else {
+				tokenList.add(new Token(tokens[i], Token.Type.Extra));
+			}
+		}
+
+		return tokenList.toArray(Token[]::new);
+	}
+
+	/**
 	 * Merges tokens into a single token depending on the content.
 	 * 
 	 * @param tokens the tokenized line of code
 	 * @return An array of tokens from the line
-	 * @see #tokenizeScriptLine(String)
+	 * @see #tokenizeSecondPass(String[])
 	 */
-	public static String[] tokenizeScriptLineSecondary( String[] tokens ) {
-		List<String> tokenList = new ArrayList<String>();
+	private static Token[] tokenizeThirdPass( Token[] tokens ) {
+		List<Token> tokenList = new ArrayList<Token>();
 		for (int i = 0; i < tokens.length; i++) {
 			// This means there is a list variable
 			// 4 tokens - 'element x of :var'
@@ -102,31 +130,38 @@ public class Script {
 				tokenList.add(tokens[i]);
 			}
 		}
-		return tokenList.toArray(String[]::new);
+		return tokenList.toArray(Token[]::new);
 	}
 
-	private static String mergeListReferenceTokens( String[] tokens, int i ) {
-		StringBuilder result = new StringBuilder("element ");
-
-		if (tokens.length - i <= 0) {
+	/**
+	 * Merges tokens related to list references together into one complex token.
+	 * 
+	 * @param tokens the tokens on this line
+	 * @param i the current index where 'element' is
+	 * @return The complex token containing the list reference
+	 */
+	private static Token mergeListReferenceTokens( Token[] tokens, int i ) {
+		if (tokens.length - i <= 0) { // Ensure there are at least enough tokens for the reference
 			SULExceptions.commandIncompleteException("The line of code is incomplete", -1, tokens);
 		}
 
-		result.append(tokens[i + 1]);
+		Token element = new Token(tokens[i].getData(), Token.Type.Extra);
 
-		if (tokens[i + 2].equals("of")) {
-			result.append(" of ");
-		} else {
+		Token index = tokens[i + 1];// new Token(tokens[i + 1].getData(), Token.Type.Variable);
+
+		if (!tokens[i + 2].equals("of")) { // Throw error if syntax is wrong
 			SULExceptions.invalidSyntaxException("Invalid list reference", -1, tokens);
 		}
 
-		if (tokens[i + 3].startsWith(":")) {
-			result.append(tokens[i + 3]);
-		} else {
-			SULExceptions.invalidSyntaxException("Variable names must start with a ':'", -1, tokens);
+		Token of = new Token("of", Token.Type.Extra);
+
+		Token var = new Token(tokens[i + 3].getData(), Token.Type.Variable);
+
+		if (!tokens[i + 3].getData().startsWith(":")) { // Throw error if syntax is wrong
+			SULExceptions.invalidVariableSyntaxException(-1, tokens);
 		}
 
-		return result.toString();
+		return new Token(element, index, of, var);
 	}
 
 	/**
@@ -134,7 +169,7 @@ public class Script {
 	 * 
 	 * @return The tokenized lines of the script
 	 */
-	public List<String[]> getLines() {
+	public List<Token[]> getLines() {
 		return tokenizedLines;
 	}
 
