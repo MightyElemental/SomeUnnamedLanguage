@@ -26,8 +26,7 @@ public class SULCommands {
 	public static void set( String[] line, int lineNum ) {
 		// Ensure variable starts with variable symbol
 		if (!line[1].startsWith(":")) {
-			System.err.println("Variable names must start with a ':'");
-			return;
+			SULExceptions.invalidVariableSyntaxException(lineNum, line);
 		}
 		// Ensure command has enough tokens
 		if (line.length < 4) {
