@@ -13,12 +13,22 @@ public class Script {
 	 * A list of tokenized lines
 	 * 
 	 * @see #tokenizeScriptLine(String)
+	 * @see #tokenizeScriptLineSecondary(String[])
 	 */
 	private List<String[]> tokenizedLines;
 
 	/** A list of unprocessed lines of code */
 	private List<String> rawLines;
 
+	/**
+	 * Create a new Script object from a provided file location.<br>
+	 * Tokenizes the lines and stores them locally.
+	 * 
+	 * @param scriptLocation the location of the script file
+	 * @throws FileNotFoundException If the file is not found at the location
+	 * @throws IOException If an I/O error occurs
+	 * @see #Script(String[])
+	 */
 	public Script( String scriptLocation ) throws IOException, FileNotFoundException {
 		this(FileManager.loadLinesFromFile(scriptLocation));
 	}
@@ -29,12 +39,14 @@ public class Script {
 	 * 
 	 * @param script the program lines
 	 */
-	public Script( String... script ) {
+	public Script( String[] script ) {
 		String[] scriptLines = Arrays.copyOf(script, script.length);
 		tokenizedLines = new ArrayList<String[]>(scriptLines.length);
 		rawLines = new ArrayList<String>(List.of(scriptLines));
 		for (String line : scriptLines) {
-			tokenizedLines.add(tokenizeScriptLine(line));
+			String[] tokens = tokenizeScriptLine(line);
+			tokens = tokenizeScriptLineSecondary(tokens);
+			tokenizedLines.add(tokens);
 		}
 	}
 
@@ -69,6 +81,52 @@ public class Script {
 		}
 		// System.err.println(tokenList);
 		return tokenList.toArray(String[]::new);
+	}
+
+	/**
+	 * Merges tokens into a single token depending on the content.
+	 * 
+	 * @param tokens the tokenized line of code
+	 * @return An array of tokens from the line
+	 * @see #tokenizeScriptLine(String)
+	 */
+	public static String[] tokenizeScriptLineSecondary( String[] tokens ) {
+		List<String> tokenList = new ArrayList<String>();
+		for (int i = 0; i < tokens.length; i++) {
+			// This means there is a list variable
+			// 4 tokens - 'element x of :var'
+			if (tokens[i].equals("element")) {
+				tokenList.add(mergeListReferenceTokens(tokens, i));
+				i += 3;
+			} else {
+				tokenList.add(tokens[i]);
+			}
+		}
+		return tokenList.toArray(String[]::new);
+	}
+
+	private static String mergeListReferenceTokens( String[] tokens, int i ) {
+		StringBuilder result = new StringBuilder("element ");
+
+		if (tokens.length - i <= 0) {
+			SULExceptions.commandIncompleteException("The line of code is incomplete", -1, tokens);
+		}
+
+		result.append(tokens[i + 1]);
+
+		if (tokens[i + 2].equals("of")) {
+			result.append(" of ");
+		} else {
+			SULExceptions.invalidSyntaxException("Invalid list reference", -1, tokens);
+		}
+
+		if (tokens[i + 3].startsWith(":")) {
+			result.append(tokens[i + 3]);
+		} else {
+			SULExceptions.invalidSyntaxException("Variable names must start with a ':'", -1, tokens);
+		}
+
+		return result.toString();
 	}
 
 	/**
