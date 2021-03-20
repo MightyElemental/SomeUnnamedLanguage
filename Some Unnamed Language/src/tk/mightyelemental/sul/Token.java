@@ -25,11 +25,8 @@ public class Token {
 	 * @param tokens an array of subtokens
 	 */
 	public Token( Token... tokens ) {
+		this(joinTokens(tokens), Type.Complex);
 		this.subTokens = Arrays.copyOf(tokens, tokens.length);
-		String[] strTokens = new String[tokens.length];
-		for (int i = 0; i < tokens.length; i++) strTokens[i] = tokens[i].getData();
-		this.data = String.join(" ", strTokens);
-		this.type = Type.Complex;
 	}
 
 	/**
@@ -58,6 +55,28 @@ public class Token {
 
 	public String toString() {
 		return data;
+	}
+
+	/**
+	 * Check if object is equal or String is equal to the contents.
+	 * 
+	 * @param o the object to test equivalency
+	 * @return {@code true} if the objects are the same
+	 */
+	public boolean equals( Object o ) {
+		return super.equals(o) || this.data.equals(o);
+	}
+
+	/**
+	 * Join tokens together to form a single String.
+	 * 
+	 * @param tokens the tokens to join
+	 * @return A String of tokens separated by spaces
+	 */
+	public static String joinTokens( Token... tokens ) {
+		String[] strTokens = new String[tokens.length];
+		for (int i = 0; i < tokens.length; i++) strTokens[i] = tokens[i].getData();
+		return String.join(" ", strTokens);
 	}
 
 	/** The token type helps with processing of commands */
