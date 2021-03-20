@@ -10,10 +10,11 @@ public class SULExceptions {
 	 * 
 	 * @param type the name of the exception
 	 * @param message the error message
+	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
 	private static void exception( String type, String message, int lineNum, String... code ) {
-		System.err.printf("%sException\n\t%s\n\tline %d: [%s]\n", type, message, lineNum+1, String.join(" ", code));
+		System.err.printf("%sException\n\t%s\n\tline %d: [%s]\n", type, message, lineNum + 1, String.join(" ", code));
 	}
 
 	/**
@@ -21,6 +22,7 @@ public class SULExceptions {
 	 * 
 	 * @param type the name of the exception
 	 * @param message the error message
+	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 * @see #exception(String, String, String)
 	 */
@@ -33,6 +35,7 @@ public class SULExceptions {
 	 * Thrown when a line of code contains invalid syntax
 	 * 
 	 * @param message the error message
+	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
 	public static void invalidSyntaxException( String message, int lineNum, String... code ) {
@@ -40,8 +43,19 @@ public class SULExceptions {
 	}
 
 	/**
+	 * Thrown when a line of code contains a variable that does not start with a colon.
+	 * 
+	 * @param lineNum the line number the code belongs to
+	 * @param code the line of code that caused the error
+	 */
+	public static void invalidVariableSyntaxException( int lineNum, String... code ) {
+		invalidSyntaxException("Variable names must start with a ':'", lineNum, code);
+	}
+
+	/**
 	 * Thrown when an attempt it made to use a variable that does not exist
 	 * 
+	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
 	public static void varNotSetException( int lineNum, String... code ) {
@@ -51,6 +65,7 @@ public class SULExceptions {
 	/**
 	 * Thrown when a non-recognized command is used
 	 * 
+	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
 	public static void commandNotRecognised( int lineNum, String... code ) {
@@ -61,6 +76,7 @@ public class SULExceptions {
 	 * Thrown when there are not enough tokens in a given line of code
 	 * 
 	 * @param message the error message
+	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
 	public static void commandIncompleteException( String message, int lineNum, String... code ) {
@@ -72,6 +88,7 @@ public class SULExceptions {
 	 * Example: Attempting to add a string to a number will throw this error
 	 * 
 	 * @param message the error message
+	 * @param lineNum the line number the code belongs to
 	 * @param code the line of code that caused the error
 	 */
 	public static void incompatibleTypeException( String message, int lineNum, String... code ) {
