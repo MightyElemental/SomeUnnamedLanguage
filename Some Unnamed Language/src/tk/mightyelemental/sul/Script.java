@@ -92,7 +92,7 @@ public class Script {
 	 * @return An array of tokens from the line (the first token is the instruction)
 	 * @see #tokenizeFirstPass(String)
 	 */
-	private Token[] tokenizeSecondPass( String[] tokens ) { // TODO: Check if these assignments are accurate in context
+	public static Token[] tokenizeSecondPass( String[] tokens ) { // TODO: Check if assignments are accurate in context
 		List<Token> tokenList = new ArrayList<Token>();
 
 		tokenList.add(new Token(tokens[0], Token.Type.Command));
@@ -118,7 +118,7 @@ public class Script {
 	 * @return An array of tokens from the line
 	 * @see #tokenizeSecondPass(String[])
 	 */
-	private static Token[] tokenizeThirdPass( Token[] tokens ) {
+	public static Token[] tokenizeThirdPass( Token[] tokens ) {
 		List<Token> tokenList = new ArrayList<Token>();
 		for (int i = 0; i < tokens.length; i++) {
 			// This means there is a list variable
