@@ -95,4 +95,15 @@ public class SULExceptions {
 		criticalException("IncompatibleType", message, lineNum, code);
 	}
 
+	/**
+	 * Thrown when the code attempts to get the value at a non-existent index of a list.
+	 * 
+	 * @param lineNum the line number the code belongs to
+	 * @param code the line of code that caused the error
+	 */
+	public static void unknownListIndexException( int lineNum, Token... code ) {
+		criticalException("UnknownListIndex", "The code tried getting the value of a non-existent location", lineNum,
+				code);
+	}
+
 }
