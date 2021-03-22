@@ -29,7 +29,7 @@ public class DataTypeList {
 
 	/**
 	 * Adds an object to the list at the next available {@linkplain #index}.<br>
-	 * Can overwrite data if a value was previously set in {@linkplain #setKeyVal(String, Object)}.
+	 * Can overwrite data if a value was previously set in {@linkplain #putKeyVal(String, Object)}.
 	 * 
 	 * @param o the object to add to the list
 	 */
@@ -43,12 +43,21 @@ public class DataTypeList {
 	 * @param key the name of the index
 	 * @param o the object to assign to the index
 	 */
-	public void setKeyVal( String key, Object o ) {
+	public void putKeyVal( String key, Object o ) {
 		valueMap.put(key, o);
 	}
 
-	public void setKeyVal( int index, Object o ) {
-		setKeyVal(Integer.toString(index), o);
+	public void putKeyVal( int index, Object o ) {
+		putKeyVal(Integer.toString(index), o);
+	}
+
+	/**
+	 * Add a pre-made map of keys and values to the {@linkplain #valueMap}.
+	 * 
+	 * @param values the key/value map to add to the data set
+	 */
+	public void putAllKeyVal( HashMap<String, Object> values ) {
+		valueMap.putAll(values);
 	}
 
 }
