@@ -1,4 +1,4 @@
-package tk.mightyelemental.sul.test;
+package tk.mightyelemental.sul;
 
 import static org.junit.Assert.*;
 
