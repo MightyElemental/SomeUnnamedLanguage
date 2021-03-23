@@ -98,7 +98,8 @@ public class Script {
 		tokenList.add(new Token(tokens[0], Token.Type.Command));
 		for (int i = 1; i < tokens.length; i++) {
 			if (tokens[i].startsWith("\"")) {
-				tokenList.add(new Token(tokens[i], Token.Type.String));
+				String formatted = tokens[i].replaceAll("\"", "");
+				tokenList.add(new Token(formatted, Token.Type.String));
 			} else if (Utils.isNumber(tokens[i])) {
 				tokenList.add(new Token(tokens[i], Token.Type.Number));
 			} else if (tokens[i].startsWith(":")) {
