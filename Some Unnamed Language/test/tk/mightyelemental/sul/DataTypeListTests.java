@@ -7,8 +7,6 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 
-import tk.mightyelemental.sul.DataTypeList;
-
 public class DataTypeListTests {
 
 	Object[]						arrayValues;
