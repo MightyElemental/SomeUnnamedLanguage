@@ -4,27 +4,44 @@ import java.util.HashMap;
 
 public class DataTypeList {
 
+	/** Where the data for the list is stored. */
 	private HashMap<String, Object> valueMap;
 
 	/**
-	 * The next available index in the list.<br>
-	 * This allows the {@code DataTypeList} to act as an array.
+	 * The next available index in the list. This allows the {@code DataTypeList} to act as an array.
 	 */
-	int index = 0;
+	private int index = 0;
 
+	/**
+	 * Create a new list object.
+	 * 
+	 * @param objects a list of objects to store starting at {@linkplain #index} 0.
+	 */
 	public DataTypeList( Object... objects ) {
 		valueMap = new HashMap<String, Object>();
 		for (Object o : objects) append(o);
 	}
 
+	/**
+	 * Get the value of a specific key.
+	 * 
+	 * @param key the key of the data
+	 * @return The data stored at the key
+	 */
 	public Object getValue( String key ) {
+		if (!valueMap.containsKey(key)) SULExceptions.unknownListIndexException(-1, (Token[]) null);
 		return valueMap.get(key);
 	}
 
+	/**
+	 * Get the value at a specific index.
+	 * 
+	 * @param index the index of the data
+	 * @return The data found at the index
+	 * @see #getValue(String)
+	 */
 	public Object getValue( int index ) {
-		String key = Integer.toString(index);
-		if (!valueMap.containsKey(key)) SULExceptions.unknownListIndexException(-1, (Token[]) null);
-		return getValue(key);
+		return getValue(Integer.toString(index));
 	}
 
 	/**
@@ -38,7 +55,7 @@ public class DataTypeList {
 	}
 
 	/**
-	 * Assign a value to a specific key.<br>
+	 * Assign a value to a specific key.
 	 * 
 	 * @param key the name of the index
 	 * @param o the object to assign to the index
@@ -47,6 +64,13 @@ public class DataTypeList {
 		valueMap.put(key, o);
 	}
 
+	/**
+	 * Assign a value found at an index to a new value. This will ignore the {@linkplain #index}.
+	 * 
+	 * @param index the index to put the value
+	 * @param o the object to place at the index
+	 * @see #putKeyVal(String, Object)
+	 */
 	public void putKeyVal( int index, Object o ) {
 		putKeyVal(Integer.toString(index), o);
 	}
