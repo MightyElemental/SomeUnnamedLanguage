@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class SomeUnnamedLanguage {
-	
+
 	/*
 	 * -=DATA TYPE TODOS=-
 	 * TODO: Add array type (more of a dictionary)
@@ -26,6 +26,9 @@ public class SomeUnnamedLanguage {
 	 * TODO: Add while loops
 	 * TODO: Add labels and goto statements
 	 */
+
+	/** Stop running script if halt flag is {@code true}. */
+	public static boolean HALT = false;
 
 	// Prevent instantiation
 	private SomeUnnamedLanguage() {
@@ -57,8 +60,8 @@ public class SomeUnnamedLanguage {
 	 * @see #interpretLine(List)
 	 */
 	static void runScript( Script script ) {
-		
 		for (int i = 0; i < script.getLines().size(); i++) {
+			if (HALT) break; // stop running script if halt flag is true.
 			Token[] line = script.getLines().get(i);
 			interpretLine(line, i);
 		}
@@ -71,6 +74,7 @@ public class SomeUnnamedLanguage {
 	 * @param lineNum the line number the code belongs to
 	 */
 	static void interpretLine( Token[] line, int lineNum ) {
+		if (HALT) return; // prevent running code if half flag is true.
 		// System.out.println(line);
 		switch (line[0].getData()) {
 			case "set":

@@ -28,7 +28,7 @@ public class SULExceptions {
 	 */
 	private static void criticalException( String type, String message, int lineNum, Token... code ) {
 		exception(type, message, lineNum, code);
-		System.exit(1);
+		SomeUnnamedLanguage.HALT = true;
 	}
 
 	/**
