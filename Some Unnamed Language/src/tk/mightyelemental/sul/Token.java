@@ -62,8 +62,10 @@ public class Token {
 		this.type = t;
 	}
 
+	/** Convert the Token to a string. Use {@link #getData()} to get the unprocessed data. */
 	public String toString() {
-		return data;
+		if (type == Type.String) return String.format("\"%s\"", data);
+		else return data;
 	}
 
 	/**
@@ -84,7 +86,7 @@ public class Token {
 	 */
 	public static String joinTokens( Token... tokens ) {
 		String[] strTokens = new String[tokens.length];
-		for (int i = 0; i < tokens.length; i++) strTokens[i] = tokens[i].getData();
+		for (int i = 0; i < tokens.length; i++) strTokens[i] = tokens[i].toString();
 		return String.join(" ", strTokens);
 	}
 
