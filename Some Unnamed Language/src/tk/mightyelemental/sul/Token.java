@@ -92,6 +92,6 @@ public class Token {
 
 	/** The token type helps with processing of commands */
 	public static enum Type {
-		Complex, ListRef, Number, String, Variable, Command, Extra
+		Complex, ListRef, Number, String, Variable, Command, Extra, RawListData
 	}
 }
