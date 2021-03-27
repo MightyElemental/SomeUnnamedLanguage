@@ -14,7 +14,11 @@ public class SULExceptions {
 	 * @param code the line of code that caused the error
 	 */
 	private static void exception( String type, String message, int lineNum, Token... code ) {
-		System.err.printf("%sException\n\t%s\n\tline %d: [%s]\n", type, message, lineNum + 1, Token.joinTokens(code));
+		if (lineNum == -1) {
+			System.err.printf("%sException\n\t%s\n\tline: [%s]\n", type, message, Token.joinTokens(code));
+		} else {
+			System.err.printf("%sException\n\t%s\n\tline %d: [%s]\n", type, message, lineNum + 1, Token.joinTokens(code));
+		}
 	}
 
 	/**
