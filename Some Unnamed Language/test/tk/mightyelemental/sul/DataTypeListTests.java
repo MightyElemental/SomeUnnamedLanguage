@@ -3,14 +3,15 @@ package tk.mightyelemental.sul;
 import static org.junit.Assert.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class DataTypeListTests {
 
-	Object[]						arrayValues;
-	HashMap<String, Object>	mapValues;
+	Object[]					arrayValues;
+	Map<String, Object>	mapValues;
 
 	@Before
 	public void initialize() {

@@ -1,11 +1,12 @@
 package tk.mightyelemental.sul;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class DataTypeList {
 
 	/** Where the data for the list is stored. */
-	private HashMap<String, Object> valueMap;
+	private Map<String, Object> valueMap;
 
 	/**
 	 * The next available index in the list. This allows the {@code DataTypeList} to act as an array.
@@ -18,7 +19,7 @@ public class DataTypeList {
 	 * @param objects a list of objects to store starting at {@linkplain #index} 0.
 	 */
 	public DataTypeList( Object... objects ) {
-		valueMap = new HashMap<String, Object>();
+		valueMap = new LinkedHashMap<String, Object>();
 		for (Object o : objects) append(o);
 	}
 
@@ -80,7 +81,7 @@ public class DataTypeList {
 	 * 
 	 * @param values the key/value map to add to the data set
 	 */
-	public void putAllKeyVal( HashMap<String, Object> values ) {
+	public void putAllKeyVal( Map<String, Object> values ) {
 		valueMap.putAll(values);
 	}
 
