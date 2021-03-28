@@ -47,4 +47,23 @@ public class DataTypeListTests {
 		assertTrue(10 == (int) dtl.getValue(2));
 	}
 
+	@Test
+	public void testDataTypeListToStringArrayMode() {
+		DataTypeList arrayMode = new DataTypeList(1, 2, 3);
+		assertEquals("[1, 2, 3]", arrayMode.toString());
+	}
+
+	@Test
+	public void testDataTypeListToStringDictMode() {
+		DataTypeList dictMode = new DataTypeList();
+		dictMode.putKeyVal("fname", "John");
+		dictMode.putKeyVal("lname", "Doe");
+		dictMode.putKeyVal("age", 25);
+		assertEquals("{fname=John, lname=Doe, age=25}", dictMode.toString());
+
+		DataTypeList mixedMode = new DataTypeList(1);
+		mixedMode.putKeyVal("name", "John Doe");
+		assertEquals("{0=1, name=John Doe}", mixedMode.toString());
+	}
+
 }
