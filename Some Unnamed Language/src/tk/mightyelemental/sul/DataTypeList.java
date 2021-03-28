@@ -2,6 +2,7 @@ package tk.mightyelemental.sul;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import static java.util.stream.Collectors.joining;
 
 public class DataTypeList {
 
@@ -12,6 +13,9 @@ public class DataTypeList {
 	 * The next available index in the list. This allows the {@code DataTypeList} to act as an array.
 	 */
 	private int index = 0;
+
+	/** Defines if the list is running in array mode or mixed/dictionary mode. */
+	private boolean arrayOnly = true;
 
 	/**
 	 * Create a new list object.
@@ -63,6 +67,7 @@ public class DataTypeList {
 	 */
 	public void putKeyVal( String key, Object o ) {
 		valueMap.put(key, o);
+		arrayOnly = false;
 	}
 
 	/**
@@ -83,6 +88,17 @@ public class DataTypeList {
 	 */
 	public void putAllKeyVal( Map<String, Object> values ) {
 		valueMap.putAll(values);
+	}
+
+	@Override
+	public String toString() {
+		if (arrayOnly) {
+			String values = valueMap.entrySet().stream().map(e -> e.getValue().toString()).collect(joining(", "));
+			return String.format("[%s]", values);
+		} else {
+			String values = valueMap.entrySet().stream().map(Object::toString).collect(joining(", "));
+			return String.format("{%s}", values);
+		}
 	}
 
 }
