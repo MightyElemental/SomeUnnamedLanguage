@@ -58,6 +58,19 @@ public class ScriptTests {
 		assertEquals(expected, errContent.toString());
 	}
 
+	/**
+	 * Run a line of code and test that the output starts with an {@code exception}.
+	 * 
+	 * @param lines the lines of code
+	 * @param lineNum the line of code to run
+	 * @param exception the expected exception
+	 */
+	private void testScriptException( List<Token[]> lines, int lineNum, String exception ) {
+		errContent.reset();
+		SomeUnnamedLanguage.interpretLine(lines.get(lineNum), lineNum);
+		assertTrue(errContent.toString().startsWith(exception));
+	}
+
 	@Test
 	public void testStringDisplay() {
 		String[] rawLines = { "display \"Hello, World!\" \" This is a test.\"" };
@@ -138,9 +151,72 @@ public class ScriptTests {
 		Script s = new Script(rawLines);
 		List<Token[]> lines = s.getLines();
 		SomeUnnamedLanguage.interpretLine(lines.get(0), 0);
-		testScriptOutputErr(lines, 1,
-				"IncompatibleTypeException\n" + "\tA number, or a number variable, needs to be used in the first argument\n"
-						+ "\tline 2: [add \"hello\" to :x]\n");
+		testScriptException(lines, 1, "IncompatibleTypeException");
+	}
+
+	@Test
+	public void testVariableTypeOverride() {
+		String[] rawLines = { "set :x to \"John Doe\"", "display :x", "set :x to 5", "display :x" };
+		Script s = new Script(rawLines);
+		List<Token[]> lines = s.getLines();
+		SomeUnnamedLanguage.interpretLine(lines.get(0), 0);
+		testScriptOutputOut(lines, 1, "John Doe\n");
+		SomeUnnamedLanguage.interpretLine(lines.get(2), 2);
+		testScriptOutputOut(lines, 3, "5\n");
+	}
+
+	@Test
+	public void testListSet() {
+		String[] rawLines = { "set :list to 1,2, 3" };
+		Script s = new Script(rawLines);
+		List<Token[]> lines = s.getLines();
+		SomeUnnamedLanguage.interpretLine(lines.get(0), 0);
+		DataTypeList t = SULCommands.getListVar(lines.get(0)[1]);
+		assertEquals(1, t.getValue(0));
+		assertEquals(2, t.getValue(1));
+		assertEquals(3, t.getValue(2));
+	}
+
+	@Test
+	public void testDictSet() {
+		String[] rawLines = { "set :dict to \"fname\":\"John\",\"lname\":\"Doe\", \"age\":25" };
+		Script s = new Script(rawLines);
+		List<Token[]> lines = s.getLines();
+		SomeUnnamedLanguage.interpretLine(lines.get(0), 0);
+		DataTypeList t = SULCommands.getListVar(lines.get(0)[1]);
+		assertEquals("John", t.getValue("fname"));
+		assertEquals("Doe", t.getValue("lname"));
+		assertEquals(25, t.getValue("age"));
+	}
+
+	@Test
+	public void testListSetAndDisplay() {
+		String[] rawLines = { "set :list to 1,2, 3", "display :list" };
+		Script s = new Script(rawLines);
+		List<Token[]> lines = s.getLines();
+		SomeUnnamedLanguage.interpretLine(lines.get(0), 0);
+		testScriptOutputOut(lines, 1, "[1, 2, 3]\n");
+	}
+
+	@Test
+	public void testDictSetAndDisplay() {
+		String[] rawLines = { "set :dict to \"fname\":\"John\",\"lname\":\"Doe\", \"age\":25", "display :dict" };
+		Script s = new Script(rawLines);
+		List<Token[]> lines = s.getLines();
+		SomeUnnamedLanguage.interpretLine(lines.get(0), 0);
+		SomeUnnamedLanguage.interpretLine(lines.get(1), 1);
+		testScriptOutputOut(lines, 2, "{fname=John, lname=Doe, age=25}\n");
+	}
+
+	@Test
+	public void testArrayOverride() {
+		String[] rawLines = { "set :list to 1,2, 3", "display :list", "set element 0 of :list to 5", "display :list" };
+		Script s = new Script(rawLines);
+		List<Token[]> lines = s.getLines();
+		SomeUnnamedLanguage.interpretLine(lines.get(0), 0);
+		testScriptOutputOut(lines, 1, "[1, 2, 3]\n");
+		SomeUnnamedLanguage.interpretLine(lines.get(2), 2);
+		testScriptOutputOut(lines, 3, "[5, 2, 3]\n");
 	}
 
 }
